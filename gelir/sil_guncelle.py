@@ -2,7 +2,6 @@ from veritabani.baglanti import veritabani_baglan
 from datetime import datetime
 
 def gelir_sil(gelir_id):
-    """Verilen ID'ye sahip gelir kaydını siler."""
     con = veritabani_baglan()
     if con is None:
         return False
@@ -24,14 +23,12 @@ def gelir_sil(gelir_id):
         con.close()
 
 def gelir_guncelle(gelir_id, yeni_miktar=None, yeni_kategori=None, yeni_tarih=None):
-    """Verilen ID'ye sahip gelir kaydını günceller."""
     con = veritabani_baglan()
     if con is None:
         return False
 
     cursor = con.cursor()
     try:
-        # Güncellenecek alanları belirle
         sorgu = "UPDATE gelir SET "
         degerler = []
 
@@ -49,7 +46,6 @@ def gelir_guncelle(gelir_id, yeni_miktar=None, yeni_kategori=None, yeni_tarih=No
             print("Güncellenecek bir alan girilmedi.")
             return False
 
-        # Sondaki virgülü kaldır
         sorgu = sorgu.rstrip(", ") + " WHERE id = %s"
         degerler.append(gelir_id)
 
@@ -68,7 +64,6 @@ def gelir_guncelle(gelir_id, yeni_miktar=None, yeni_kategori=None, yeni_tarih=No
         cursor.close()
         con.close()
 
-# Test / terminalden çalıştırma
 if __name__ == "__main__":
     print("1 - Gelir Sil")
     print("2 - Gelir Güncelle")
@@ -83,12 +78,9 @@ if __name__ == "__main__":
             miktar = input("Yeni miktar (boş bırakılırsa değişmez): ")
             kategori = input("Yeni kategori (boş bırakılırsa değişmez): ")
             tarih = input("Yeni tarih (YYYY-MM-DD, boşsa değişmez): ")
-
-            # Boş bırakılanları None yap
             miktar = float(miktar) if miktar else None
             kategori = kategori if kategori else None
             tarih = tarih if tarih else None
-
             gelir_guncelle(gelir_id, miktar, kategori, tarih)
         else:
             print("Geçersiz seçim.")
