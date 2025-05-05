@@ -48,6 +48,7 @@ git clone https://github.com/YigithanFirat/PersonalFinanceManagement.git
 cd PersonalFinanceManagement
 
 📈 Grafiksel Raporlar
+
 Aylık Gelir Grafiği: Her ayın toplam gelirleri
 
 Aylık Gider Grafiği: Her ayın toplam giderleri
@@ -55,10 +56,12 @@ Aylık Gider Grafiği: Her ayın toplam giderleri
 Aylık Karşılaştırmalı Grafik: Gelir ve giderlerin aylık karşılaştırması
 
 📌 Notlar
+
 Tarih formatı: YYYY-MM-DD. Hatalı girişlerde otomatik olarak bugünün tarihi kullanılır.
 
 Veritabanı bağlantı bilgilerinin güvenli bir şekilde saklandığından emin olun.
 
 👨‍💻 Geliştirici
+
 Bu proje bireysel bir Python öğrenme ve uygulama sürecinin parçası olarak geliştirilmiştir. Daha fazlası için iletişime geçebilirsiniz.
 
