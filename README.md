@@ -43,26 +43,23 @@ git clone https://github.com/YigithanFirat/PersonalFinanceTrackingApp.git
 cd PersonalFinanceTrackingApp
 pip install mysql-connector-python matplotlib
 python main.py
+```
 
-📈 Grafiksel Raporlar
+## 📈 Grafiksel Raporlar
 Aylık Gelir Grafiği: Her ayın toplam gelirleri
-
 Aylık Gider Grafiği: Her ayın toplam giderleri
-
 Aylık Karşılaştırmalı Grafik: Gelir ve giderlerin aylık karşılaştırması
 
-🗃️ Veritabanı Şeması
+## 🗃️ Veritabanı Şeması
 Aşağıda uygulamada kullanılan temel MySQL veritabanı şeması yer almaktadır:
 veritabani_sablon.png
 
 
-📌 Notlar
+## 📌 Notlar
 Tarih formatı: YYYY-MM-DD
-
 Hatalı veya boş bırakılan tarih girişlerinde otomatik olarak bugünün tarihi kullanılır.
-
 Veritabanı bağlantı bilgilerinizi gizli tutmayı unutmayın.
 
-👨‍💻 Geliştirici
+## 👨‍💻 Geliştirici
 Bu proje bireysel bir Python öğrenme ve uygulama sürecinin parçası olarak geliştirilmiştir.
 Geri bildirim, katkı ya da iletişim için GitHub üzerinden ulaşabilirsiniz.
