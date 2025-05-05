@@ -12,7 +12,6 @@ Bu Python projesi, kişisel gelir ve giderlerinizi yönetmenize, veritabanında 
 
 ## 🧱 Proje Klasör Yapısı
 
-.
 ├── main.py # Ana uygulama dosyası (menü arayüzü)
 ├── gelir/
 │ ├── ekle.py # Gelir ekleme fonksiyonu
@@ -28,33 +27,39 @@ Bu Python projesi, kişisel gelir ve giderlerinizi yönetmenize, veritabanında 
 │ └── tarih_formatla.py # Tarih formatlama ve doğrulama yardımcı fonksiyonu
 └── README.md # Bu dosya
 
-
 ## ⚙️ Gereksinimler
 
 - Python 3.8 veya üzeri
 - MySQL veritabanı
-- Gerekli Python kütüphaneleri:
+- Python bağımlılıkları:
   - `mysql-connector-python`
   - `matplotlib`
 
-> Gerekli kütüphaneleri yüklemek için:
+## 💾 Kurulum
+
 ```bash
+git clone https://github.com/YigithanFirat/PersonalFinanceTrackingApp.git
+cd PersonalFinanceTrackingApp
 pip install mysql-connector-python matplotlib
-python main.py
-
-⚙️ Projeyi Klonma
-
-git clone https://github.com/YigithanFirat/PersonalFinanceManagement.git
-cd PersonalFinanceManagement
+python main.py```
 
 📈 Grafiksel Raporlar
 Aylık Gelir Grafiği: Her ayın toplam gelirleri
+
 Aylık Gider Grafiği: Her ayın toplam giderleri
+
 Aylık Karşılaştırmalı Grafik: Gelir ve giderlerin aylık karşılaştırması
 
+🗃️ Veritabanı Şeması
+Aşağıda uygulamada kullanılan temel MySQL veritabanı şeması yer almaktadır:
+![alt text](veritabani_sablon.png)
+
 📌 Notlar
-Tarih formatı: YYYY-MM-DD. Hatalı girişlerde otomatik olarak bugünün tarihi kullanılır.
-Veritabanı bağlantı bilgilerinin güvenli bir şekilde saklandığından emin olun.
+Tarih formatı: YYYY-MM-DD
+
+Hatalı veya boş bırakılan tarih girişlerinde otomatik olarak bugünün tarihi kullanılır.
+
+Veritabanı bağlantı bilgilerinizi gizli tutmayı unutmayın.
 
 👨‍💻 Geliştirici
-Bu proje bireysel bir Python öğrenme ve uygulama sürecinin parçası olarak geliştirilmiştir. Daha fazlası için iletişime geçebilirsiniz.
+Bu proje bireysel bir Python öğrenme ve uygulama sürecinin parçası olarak geliştirilmiştir. Geri bildirim, katkı ya da iletişim için GitHub üzerinden ulaşabilirsiniz.
