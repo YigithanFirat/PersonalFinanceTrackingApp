@@ -15,17 +15,17 @@ Bu Python projesi, kişisel gelir ve giderlerinizi yönetmenize, veritabanında 
 ### 🧱 Proje Klasör Yapısı
 
 ├── main.py                       # Ana uygulama dosyası (menü arayüzü)  
-├── gelir/
+├── gelir/  
 │ ├── ekle.py                     # Gelir ekleme fonksiyonu  
 │ ├── listele.py                  # Gelirleri listeleme fonksiyonu  
 │ └── sil_guncelle.py             # Gelirleri silme ve güncelleme fonksiyonu  
-├── gider/
+├── gider/  
 │ ├── ekle.py                     # Gider ekleme fonksiyonu  
 │ ├── listele.py                  # Giderleri listeleme fonksiyonu  
 │ └── sil_guncelle.py             # Giderleri silme ve güncelleme fonksiyonu  
-├── raporlar/
+├── raporlar/  
 │ └── grafik_olustur.py           # Gelir/Gider grafik raporları  
-├── utils/
+├── utils/  
 │ └── tarih_formatla.py           # Tarih formatlama ve doğrulama yardımcı fonksiyonu  
 └── README.md                     # Bu dosya  
 
