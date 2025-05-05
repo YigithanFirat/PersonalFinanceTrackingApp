@@ -50,10 +50,6 @@ Aylık Gelir Grafiği: Her ayın toplam gelirleri
 Aylık Gider Grafiği: Her ayın toplam giderleri
 Aylık Karşılaştırmalı Grafik: Gelir ve giderlerin aylık karşılaştırması
 
-## 🗃️ Veritabanı Şeması
-Aşağıda uygulamada kullanılan temel MySQL veritabanı şeması yer almaktadır:
-![alt text](veritabani_sablon.png)
-
 ## 📌 Notlar
 Tarih formatı: YYYY-MM-DD
 Hatalı veya boş bırakılan tarih girişlerinde otomatik olarak bugünün tarihi kullanılır.
