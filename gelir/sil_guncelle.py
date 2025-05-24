@@ -1,23 +1,21 @@
 from veritabani.baglanti import veritabani_baglan
-from datetime import datetime
 
 def gelir_sil(gelir_id):
     con = veritabani_baglan()
     if con is None:
-        return False
+        return {"success": False, "message": "Veritabanına bağlanılamadı."}
 
     cursor = con.cursor()
     try:
         cursor.execute("DELETE FROM gelir WHERE id = %s", (gelir_id,))
         con.commit()
+
         if cursor.rowcount == 0:
-            print("Belirtilen ID'ye ait gelir kaydı bulunamadı.")
-            return False
-        print("Gelir başarıyla silindi.")
-        return True
+            return {"success": False, "message": "Belirtilen ID'ye ait gelir kaydı bulunamadı."}
+
+        return {"success": True, "message": "Gelir başarıyla silindi."}
     except Exception as e:
-        print(f"Silme hatası: {e}")
-        return False
+        return {"success": False, "message": f"Silme hatası: {e}"}
     finally:
         cursor.close()
         con.close()
@@ -25,7 +23,7 @@ def gelir_sil(gelir_id):
 def gelir_guncelle(gelir_id, yeni_miktar=None, yeni_kategori=None, yeni_tarih=None):
     con = veritabani_baglan()
     if con is None:
-        return False
+        return {"success": False, "message": "Veritabanına bağlanılamadı."}
 
     cursor = con.cursor()
     try:
@@ -43,8 +41,7 @@ def gelir_guncelle(gelir_id, yeni_miktar=None, yeni_kategori=None, yeni_tarih=No
             degerler.append(yeni_tarih)
 
         if not degerler:
-            print("Güncellenecek bir alan girilmedi.")
-            return False
+            return {"success": False, "message": "Güncellenecek bir alan girilmedi."}
 
         sorgu = sorgu.rstrip(", ") + " WHERE id = %s"
         degerler.append(gelir_id)
@@ -53,36 +50,11 @@ def gelir_guncelle(gelir_id, yeni_miktar=None, yeni_kategori=None, yeni_tarih=No
         con.commit()
 
         if cursor.rowcount == 0:
-            print("Güncellenecek kayıt bulunamadı.")
-            return False
-        print("Gelir başarıyla güncellendi.")
-        return True
+            return {"success": False, "message": "Güncellenecek kayıt bulunamadı."}
+
+        return {"success": True, "message": "Gelir başarıyla güncellendi."}
     except Exception as e:
-        print(f"Güncelleme hatası: {e}")
-        return False
+        return {"success": False, "message": f"Güncelleme hatası: {e}"}
     finally:
         cursor.close()
         con.close()
-
-if __name__ == "__main__":
-    print("1 - Gelir Sil")
-    print("2 - Gelir Güncelle")
-    secim = input("İşlem seçiniz (1/2): ")
-
-    try:
-        if secim == "1":
-            gelir_id = int(input("Silinecek gelir ID'sini giriniz: "))
-            gelir_sil(gelir_id)
-        elif secim == "2":
-            gelir_id = int(input("Güncellenecek gelir ID'sini giriniz: "))
-            miktar = input("Yeni miktar (boş bırakılırsa değişmez): ")
-            kategori = input("Yeni kategori (boş bırakılırsa değişmez): ")
-            tarih = input("Yeni tarih (YYYY-MM-DD, boşsa değişmez): ")
-            miktar = float(miktar) if miktar else None
-            kategori = kategori if kategori else None
-            tarih = tarih if tarih else None
-            gelir_guncelle(gelir_id, miktar, kategori, tarih)
-        else:
-            print("Geçersiz seçim.")
-    except ValueError:
-        print("Geçersiz giriş.")
