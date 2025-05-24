@@ -1,6 +1,8 @@
 from veritabani.baglanti import veritabani_baglan
 import pandas as pd
 import matplotlib.pyplot as plt
+import io
+import base64
 
 def veri_cek(tablo_adi):
     con = veritabani_baglan()
@@ -15,7 +17,7 @@ def aylik_toplam(df):
     df['tarih'] = df['tarih'].astype(str)
     return df
 
-def ciz_grafik(df, title, label, color='blue'):
+def grafik_png_olarak_olustur(df, title, label, color='blue'):
     plt.figure(figsize=(10, 5))
     plt.plot(df['tarih'], df['miktar'], marker='o', label=label, color=color)
     plt.title(title)
@@ -25,17 +27,23 @@ def ciz_grafik(df, title, label, color='blue'):
     plt.grid(True)
     plt.tight_layout()
     plt.legend()
-    plt.show()
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close()
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+    return img_base64
 
 def gelir_grafik():
     df = veri_cek("gelir")
     df = aylik_toplam(df)
-    ciz_grafik(df, "Aylık Gelir Grafiği", "Gelir", color='green')
+    return grafik_png_olarak_olustur(df, "Aylık Gelir Grafiği", "Gelir", color='green')
 
 def gider_grafik():
     df = veri_cek("gider")
     df = aylik_toplam(df)
-    ciz_grafik(df, "Aylık Gider Grafiği", "Gider", color='red')
+    return grafik_png_olarak_olustur(df, "Aylık Gider Grafiği", "Gider", color='red')
 
 def gelir_gider_karsilastir():
     df_gelir = aylik_toplam(veri_cek("gelir"))
@@ -52,4 +60,10 @@ def gelir_gider_karsilastir():
     plt.grid(True)
     plt.tight_layout()
     plt.legend()
-    plt.show()
+
+    buf = io.BytesIO()
+    plt.savefig(buf, format='png')
+    plt.close()
+    buf.seek(0)
+    img_base64 = base64.b64encode(buf.getvalue()).decode('utf-8')
+    return img_base64
