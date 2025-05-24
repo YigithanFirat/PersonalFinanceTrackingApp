@@ -27,18 +27,21 @@ def tum_tablolari_olustur():
     """Gelir ve gider tablolarını oluşturur."""
     con = veritabani_baglan()
     if con is None:
+        print("Veritabanı bağlantısı kurulamadı, tablolar oluşturulamadı.")
         return
 
-    cursor = con.cursor()
-    
-    # Tabloları oluştur
-    gelir_tablosu_olustur(cursor)
-    gider_tablosu_olustur(cursor)
-
-    con.commit()  # Değişiklikleri kaydet
-    cursor.close()
-    con.close()
-    print("Tüm tablolar başarıyla oluşturuldu.")
+    try:
+        cursor = con.cursor()
+        gelir_tablosu_olustur(cursor)
+        gider_tablosu_olustur(cursor)
+        con.commit()
+        print("Tüm tablolar başarıyla oluşturuldu.")
+    except Exception as e:
+        print(f"Tablo oluşturma sırasında hata oluştu: {e}")
+    finally:
+        if cursor:
+            cursor.close()
+        con.close()
 
 if __name__ == "__main__":
     tum_tablolari_olustur()
