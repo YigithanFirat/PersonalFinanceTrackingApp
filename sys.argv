@@ -1,0 +1,16 @@
+import sys
+
+def run_command(args):
+    cmd = args[0]
+    if cmd == "gelir_ekle":
+        miktar = float(args[1])
+        kategori = args[2]
+        tarih = args[3] if len(args) > 3 else None
+        gelir_ekle(miktar, kategori, tarih)
+        print("Gelir eklendi.")
+    elif cmd == "gelir_listele":
+        gelirleri_listele()
+    # Diğer komutlar...
+
+if __name__ == "__main__":
+    run_command(sys.argv[1:])
