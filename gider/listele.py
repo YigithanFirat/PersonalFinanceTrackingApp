@@ -3,8 +3,7 @@ from veritabani.baglanti import veritabani_baglan
 def giderleri_listele():
     con = veritabani_baglan()
     if con is None:
-        print("Veritabanı bağlantısı başarısız.")
-        return
+        return {"success": False, "message": "Veritabanı bağlantısı başarısız.", "veriler": []}
 
     cursor = con.cursor(dictionary=True)
 
@@ -13,15 +12,11 @@ def giderleri_listele():
         kayitlar = cursor.fetchall()
 
         if not kayitlar:
-            print("Kayıtlı gider bulunamadı.")
-            return
+            return {"success": True, "message": "Kayıtlı gider bulunamadı.", "veriler": []}
 
-        print("\n--- Gider Kayıtları ---")
-        for gider in kayitlar:
-            print(f"ID: {gider['id']}, Miktar: {gider['miktar']}, Kategori: {gider['kategori']}, "
-                  f"Açıklama: {gider['aciklama']}, Tarih: {gider['tarih']}")
+        return {"success": True, "message": "Giderler başarıyla listelendi.", "veriler": kayitlar}
     except Exception as e:
-        print(f"Gider listeleme hatası: {e}")
+        return {"success": False, "message": f"Gider listeleme hatası: {e}", "veriler": []}
     finally:
         cursor.close()
         con.close()
