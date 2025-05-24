@@ -13,6 +13,6 @@ def veritabani_baglan():
         con = mysql.connector.connect(**DB_CONFIG)
         if con.is_connected():
             return con
-    except:
+    except Error as e:
         print(f"Veritabanı bağlantı hatası: {e}")
-        return None
+    return None
