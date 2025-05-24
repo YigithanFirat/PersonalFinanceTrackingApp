@@ -4,7 +4,7 @@ from datetime import datetime
 def gelir_ekle(miktar, kategori, tarih=None):
     con = veritabani_baglan()
     if con is None:
-        return False
+        return {"success": False, "message": "Veritabanı bağlantısı başarısız."}
 
     cursor = con.cursor()
 
@@ -18,19 +18,9 @@ def gelir_ekle(miktar, kategori, tarih=None):
         """, (miktar, kategori, tarih))
 
         con.commit()
-        print("Gelir başarıyla eklendi.")
-        return True
+        return {"success": True, "message": "Gelir başarıyla eklendi."}
     except Exception as e:
-        print(f"Gelir ekleme hatası: {e}")
-        return False
+        return {"success": False, "message": f"Gelir ekleme hatası: {e}"}
     finally:
         cursor.close()
         con.close()
-
-if __name__ == "__main__":
-    try:
-        miktar = float(input("Gelir miktarını giriniz: "))
-        kategori = input("Gelir kategorisini giriniz: ")
-        gelir_ekle(miktar, kategori)
-    except ValueError:
-        print("Geçerli bir miktar giriniz.")
