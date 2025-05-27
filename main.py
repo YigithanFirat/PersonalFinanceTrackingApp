@@ -12,15 +12,14 @@ from raporlar.grafik_olustur import gelir_gider_karsilastir, gelir_grafik, gider
 
 app = Flask(__name__)
 app.secret_key = 'Abusivesnake'  # Session için gerekli
-CORS(app)
 
-@app.route('/')
+CORS(app, supports_credentials=True)
+
 @app.route('/')
 def index():
     login_durumu = "bil" if session.get('login') else ""
     return render_template("index.html", login_durumu=login_durumu)
 
-# GELİR CRUD
 @app.route('/api/gelir/ekle', methods=['POST'])
 def gelir_ekle_route():
     return gelir_ekle()
@@ -37,7 +36,6 @@ def gelir_sil_route(id):
 def gelir_guncelle_route(id):
     return gelir_guncelle(id)
 
-# GİDER CRUD
 @app.route('/api/gider/ekle', methods=['POST'])
 def gider_ekle_route():
     return gider_ekle()
@@ -58,7 +56,6 @@ def gider_guncelle_route(id):
 def update_login_status_route():
     return update_login_status()
 
-# GRAFİK ENDPOINTLERİ
 @app.route('/api/grafik/gelir')
 def api_gelir_grafik():
     return gelir_grafik()
@@ -71,17 +68,17 @@ def api_gider_grafik():
 def api_gelir_gider_karsilastir():
     return gelir_gider_karsilastir()
 
-# KULLANICI İŞLEMLERİ
-@app.route('/register', methods=['POST'])
-def register_user():
-    return register()
-
 @app.route('/login', methods=['POST'])
 def login_route():
     return login()
 
+@app.route('/register', methods=['POST'])
+def register_user():
+    return register()
+
 @app.route('/logout', methods=['POST'])
 def logout_route():
+    session.clear()
     return logout()
 
 @app.route('/check_username', methods=['POST'])
@@ -105,7 +102,6 @@ def check_username():
     else:
         return jsonify({'exists': False})
 
-# GELİR + GİDER İŞLEMLERİ (Toplu işlem listeleme)
 @app.route('/api/transactions', methods=['GET'])
 def tum_islemler():
     user_id = session.get('user_id')
@@ -118,7 +114,6 @@ def tum_islemler():
 
     cursor = conn.cursor(dictionary=True)
 
-    # Kullanıcının gelir verileri
     cursor.execute("""
         SELECT id, miktar, kategori, tarih, kullanici_id
         FROM gelir
@@ -126,7 +121,6 @@ def tum_islemler():
     """, (user_id,))
     gelirler = cursor.fetchall()
 
-    # Kullanıcının gider verileri
     cursor.execute("""
         SELECT id, miktar, kategori, aciklama, tarih, kullanici_id
         FROM gider
@@ -137,7 +131,6 @@ def tum_islemler():
     cursor.close()
     conn.close()
 
-    # Giderleri biçimlendir
     giderler_formatted = [
         {
             "id": g["id"],
@@ -150,7 +143,6 @@ def tum_islemler():
         for g in giderler
     ]
 
-    # Gelirleri biçimlendir
     gelirler_formatted = [
         {
             "id": g["id"],
@@ -163,7 +155,6 @@ def tum_islemler():
         for g in gelirler
     ]
 
-    # Gelir ve giderleri birleştir, tarihe göre sırala
     tum = gelirler_formatted + giderler_formatted
     tum.sort(key=lambda x: x["date"], reverse=True)
 
