@@ -1,175 +1,177 @@
+from flask import Flask, request, jsonify, render_template, session
+from flask_cors import CORS
+from veritabani.baglanti import veritabani_baglan
+from veritabani.register_login import register, login, logout, update_login_status
 from gelir.ekle import gelir_ekle
+from gelir.listele import gelir_listele
 from gelir.sil_guncelle import gelir_sil, gelir_guncelle
-from gelir.listele import gelirleri_listele
 from gider.ekle import gider_ekle
 from gider.listele import giderleri_listele
-from gider.sil_guncelle import gider_sil, gider_guncelle
-from raporlar.grafik_olustur import gelir_grafik, gider_grafik, gelir_gider_karsilastir
-from utils.tarih_formatla import tarih_formatla
+from gider.sil_guncelle import gider_guncelle, gider_sil
+from raporlar.grafik_olustur import gelir_gider_karsilastir, gelir_grafik, gider_grafik
 
-# -----------------------------
-# Menü Gösterim Fonksiyonları
-# -----------------------------
+app = Flask(__name__)
+app.secret_key = 'Abusivesnake'  # Session için gerekli
+CORS(app)
 
-def ana_menu_goster():
-    print("\n--- Ana Menü ---")
-    print("1. Gelir İşlemleri")
-    print("2. Gider İşlemleri")
-    print("3. Grafik Raporları")
-    print("0. Çıkış")
+@app.route('/')
+@app.route('/')
+def index():
+    login_durumu = "bil" if session.get('login') else ""
+    return render_template("index.html", login_durumu=login_durumu)
 
-def gelir_menu_goster():
-    print("\n--- Gelir İşlemleri ---")
-    print("1. Gelir Ekle")
-    print("2. Gelir Sil")
-    print("3. Gelir Güncelle")
-    print("4. Gelirleri Listele")
-    print("0. Geri Dön")
+# GELİR CRUD
+@app.route('/api/gelir/ekle', methods=['POST'])
+def gelir_ekle_route():
+    return gelir_ekle()
 
-def gider_menu_goster():
-    print("\n--- Gider İşlemleri ---")
-    print("1. Gider Ekle")
-    print("2. Gider Listele")
-    print("3. Gider Sil")
-    print("4. Gider Güncelle")
-    print("0. Geri Dön")
+@app.route('/api/gelir/listele', methods=['GET'])
+def gelir_listele_route():
+    return gelir_listele()
 
-def grafik_menu_goster():
-    print("\n--- Grafik Raporları ---")
-    print("1. Aylık Gelir Grafiği")
-    print("2. Aylık Gider Grafiği")
-    print("3. Aylık Gelir-Gider Karşılaştırması")
-    print("0. Geri Dön")
+@app.route('/api/gelir/sil/<int:id>', methods=['DELETE'])
+def gelir_sil_route(id):
+    return gelir_sil(id)
 
-# -----------------------------
-# İşlem Fonksiyonları
-# -----------------------------
+@app.route('/api/gelir/guncelle/<int:id>', methods=['PUT'])
+def gelir_guncelle_route(id):
+    return gelir_guncelle(id)
 
-def gelir_islemleri():
-    while True:
-        gelir_menu_goster()
-        secim = input("Seçiminiz: ")
+# GİDER CRUD
+@app.route('/api/gider/ekle', methods=['POST'])
+def gider_ekle_route():
+    return gider_ekle()
 
-        if secim == "1":
-            try:
-                miktar = float(input("Gelir miktarı: "))
-                kategori = input("Kategori: ")
-                tarih = tarih_formatla(input("Tarih (YYYY-MM-DD, boşsa bugünün tarihi): "))
-                if tarih:
-                    gelir_ekle(miktar, kategori, tarih)
-            except ValueError:
-                print("Geçersiz miktar girdiniz.")
-        elif secim == "2":
-            try:
-                gelir_id = int(input("Silinecek gelir ID'si: "))
-                gelir_sil(gelir_id)
-            except ValueError:
-                print("Geçersiz ID.")
-        elif secim == "3":
-            try:
-                gelir_id = int(input("Güncellenecek gelir ID'si: "))
-                miktar = input("Yeni miktar (boşsa değişmez): ")
-                kategori = input("Yeni kategori (boşsa değişmez): ")
-                tarih_input = input("Yeni tarih (YYYY-MM-DD, boşsa değişmez): ")
-                tarih = tarih_formatla(tarih_input) if tarih_input else None
+@app.route('/api/gider/listele', methods=['GET'])
+def giderleri_listele_route():
+    return giderleri_listele()
 
-                gelir_guncelle(
-                    gelir_id,
-                    float(miktar) if miktar else None,
-                    kategori if kategori else None,
-                    tarih
-                )
-            except ValueError:
-                print("Girişlerde hata var, lütfen tekrar deneyin.")
-        elif secim == "4":
-            gelirleri_listele()
-        elif secim == "0":
-            break
-        else:
-            print("Geçersiz seçim.")
+@app.route('/api/gider/sil/<int:id>', methods=['DELETE'])
+def gider_sil_route(id):
+    return gider_sil(id)
 
-def gider_islemleri():
-    while True:
-        gider_menu_goster()
-        secim = input("Seçiminiz: ")
+@app.route('/api/gider/guncelle/<int:id>', methods=['PUT'])
+def gider_guncelle_route(id):
+    return gider_guncelle(id)
 
-        if secim == "1":
-            try:
-                miktar = float(input("Gider miktarı: "))
-                kategori = input("Kategori: ")
-                aciklama = input("Açıklama (opsiyonel): ")
-                tarih = tarih_formatla(input("Tarih (YYYY-MM-DD, boşsa bugünün tarihi): "))
-                if tarih:
-                    gider_ekle(miktar, kategori, aciklama, tarih)
-            except ValueError:
-                print("Geçersiz miktar girdiniz.")
-        elif secim == "2":
-            giderleri_listele()
-        elif secim == "3":
-            try:
-                gider_id = int(input("Silinecek gider ID'si: "))
-                gider_sil(gider_id)
-            except ValueError:
-                print("Geçersiz ID.")
-        elif secim == "4":
-            try:
-                gider_id = int(input("Güncellenecek gider ID'si: "))
-                miktar = input("Yeni miktar (boşsa değişmez): ")
-                kategori = input("Yeni kategori (boşsa değişmez): ")
-                aciklama = input("Yeni açıklama (boşsa değişmez): ")
-                tarih_input = input("Yeni tarih (YYYY-MM-DD, boşsa değişmez): ")
-                tarih = tarih_formatla(tarih_input) if tarih_input else None
+@app.route('/update_login_status', methods=['POST'])
+def update_login_status_route():
+    return update_login_status()
 
-                gider_guncelle(
-                    gider_id,
-                    float(miktar) if miktar else None,
-                    kategori if kategori else None,
-                    aciklama if aciklama else None,
-                    tarih
-                )
-            except ValueError:
-                print("Geçersiz giriş.")
-        elif secim == "0":
-            break
-        else:
-            print("Geçersiz seçim.")
+# GRAFİK ENDPOINTLERİ
+@app.route('/api/grafik/gelir')
+def api_gelir_grafik():
+    return gelir_grafik()
 
-def grafik_raporlari():
-    while True:
-        grafik_menu_goster()
-        secim = input("Seçiminiz: ")
+@app.route('/api/grafik/gider')
+def api_gider_grafik():
+    return gider_grafik()
 
-        if secim == "1":
-            gelir_grafik()
-        elif secim == "2":
-            gider_grafik()
-        elif secim == "3":
-            gelir_gider_karsilastir()
-        elif secim == "0":
-            break
-        else:
-            print("Geçersiz seçim.")
+@app.route('/api/grafik/karsilastir')
+def api_gelir_gider_karsilastir():
+    return gelir_gider_karsilastir()
 
-# -----------------------------
-# Ana Fonksiyon
-# -----------------------------
+# KULLANICI İŞLEMLERİ
+@app.route('/register', methods=['POST'])
+def register_user():
+    return register()
 
-def main():
-    while True:
-        ana_menu_goster()
-        secim = input("Seçiminiz: ")
+@app.route('/login', methods=['POST'])
+def login_route():
+    return login()
 
-        if secim == "1":
-            gelir_islemleri()
-        elif secim == "2":
-            gider_islemleri()
-        elif secim == "3":
-            grafik_raporlari()
-        elif secim == "0":
-            print("Programdan çıkılıyor...")
-            break
-        else:
-            print("Geçersiz seçim.")
+@app.route('/logout', methods=['POST'])
+def logout_route():
+    return logout()
+
+@app.route('/check_username', methods=['POST'])
+def check_username():
+    data = request.get_json()
+    username = data.get('username')
+
+    if not username:
+        return jsonify({'error': 'Username gerekli'}), 400
+
+    conn = veritabani_baglan()
+    cursor = conn.cursor()
+    cursor.execute("SELECT id FROM kullanicilar WHERE kullanici_adi = %s", (username,))
+    result = cursor.fetchone()
+
+    cursor.close()
+    conn.close()
+
+    if result:
+        return jsonify({'exists': True, 'id': result[0]})
+    else:
+        return jsonify({'exists': False})
+
+# GELİR + GİDER İŞLEMLERİ (Toplu işlem listeleme)
+@app.route('/api/transactions', methods=['GET'])
+def tum_islemler():
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'error': 'Giriş yapılmamış'}), 401
+
+    conn = veritabani_baglan()
+    if not conn:
+        return jsonify({'error': 'Veritabanına bağlanılamadı'}), 500
+
+    cursor = conn.cursor(dictionary=True)
+
+    # Kullanıcının gelir verileri
+    cursor.execute("""
+        SELECT id, miktar, kategori, tarih, kullanici_id
+        FROM gelir
+        WHERE kullanici_id = %s
+    """, (user_id,))
+    gelirler = cursor.fetchall()
+
+    # Kullanıcının gider verileri
+    cursor.execute("""
+        SELECT id, miktar, kategori, aciklama, tarih, kullanici_id
+        FROM gider
+        WHERE kullanici_id = %s
+    """, (user_id,))
+    giderler = cursor.fetchall()
+
+    cursor.close()
+    conn.close()
+
+    # Giderleri biçimlendir
+    giderler_formatted = [
+        {
+            "id": g["id"],
+            "amount": float(g["miktar"]),
+            "category": f"{g['kategori']} ({g['aciklama']})" if g.get("aciklama") else g["kategori"],
+            "date": g["tarih"].strftime("%Y-%m-%d"),
+            "user_id": g["kullanici_id"],
+            "type": "Gider"
+        }
+        for g in giderler
+    ]
+
+    # Gelirleri biçimlendir
+    gelirler_formatted = [
+        {
+            "id": g["id"],
+            "amount": float(g["miktar"]),
+            "category": g["kategori"],
+            "date": g["tarih"].strftime("%Y-%m-%d"),
+            "user_id": g["kullanici_id"],
+            "type": "Gelir"
+        }
+        for g in gelirler
+    ]
+
+    # Gelir ve giderleri birleştir, tarihe göre sırala
+    tum = gelirler_formatted + giderler_formatted
+    tum.sort(key=lambda x: x["date"], reverse=True)
+
+    return jsonify(tum)
+
+@app.route('/grafik')
+def grafik():
+    return render_template('grafik.html')
 
 if __name__ == "__main__":
-    main()
+    app.run(debug=True)
