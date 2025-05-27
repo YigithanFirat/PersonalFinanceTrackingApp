@@ -1,0 +1,176 @@
+* {
+  box-sizing: border-box;
+}
+body {
+  font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+  background-color: #f4f6f8;
+  color: #333;
+  max-width: 800px;
+  margin: 0 auto;
+  padding: 20px;
+}
+h1 {
+  text-align: center;
+  color: #007bff;
+  margin-bottom: 30px;
+}
+button, input, select {
+  font-size: 1rem;
+  padding: 10px;
+  border-radius: 8px;
+  border: 1px solid #ccc;
+  outline: none;
+  transition: 0.3s ease;
+  margin-top: 5px;
+  width: 100%;
+}
+button:hover {
+  background-color: #007bff;
+  color: white;
+  cursor: pointer;
+  border-color: #007bff;
+}
+#goToGraph {
+  background-color: #28a745;
+  color: white;
+  border: none;
+  margin-bottom: 20px;
+}
+#goToGraph:hover {
+  background-color: #218838;
+}
+form {
+  background-color: white;
+  padding: 20px;
+  border-radius: 12px;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+  margin-bottom: 30px;
+}
+label {
+  margin-top: 10px;
+  display: block;
+  font-weight: bold;
+}
+table {
+  width: 100%;
+  border-collapse: collapse;
+  margin-top: 10px;
+  background-color: white;
+  border-radius: 12px;
+  overflow: hidden;
+  box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+}
+th, td {
+  padding: 12px;
+  text-align: left;
+  border-bottom: 1px solid #eee;
+}
+th {
+  background-color: #f0f0f0;
+}
+tr:hover {
+  background-color: #f9f9f9;
+}
+button.edit {
+  background-color: #FF9900;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  margin-right: 5px;
+  width: auto;
+  cursor: pointer;
+}
+button.delete {
+  background-color: #dc3545;
+  color: white;
+  border: none;
+  padding: 6px 12px;
+  border-radius: 6px;
+  width: auto;
+  cursor: pointer;
+}
+button.edit:hover {
+  background-color: #e0a800;
+}
+button.delete:hover {
+  background-color: #c82333;
+}
+#status, #authStatus {
+  margin-top: 15px;
+  font-weight: bold;
+  color: #555;
+  text-align: center;
+}
+/* Sekme butonları */
+.tab {
+  display: inline-block;
+  padding: 10px 20px;
+  margin-right: 10px;
+  background-color: #eee;
+  border-radius: 12px 12px 0 0;
+  cursor: pointer;
+  font-weight: bold;
+  color: #333;
+  user-select: none;
+}
+.tab.active {
+  background-color: #007bff;
+  color: white;
+}
+/* Gizleme */
+.hidden {
+  display: none;
+}
+@media screen and (max-width: 600px) {
+  form, table {
+    font-size: 0.9rem;
+  }
+  button, input, select {
+    font-size: 0.9rem;
+  }
+  button.edit, button.delete {
+    padding: 5px 8px;
+  }
+}
+
+    .hidden {
+      display: none;
+    }
+
+    .tab {
+      cursor: pointer;
+      display: inline-block;
+      padding: 10px 20px;
+      border: 1px solid #ccc;
+      user-select: none;
+    }
+    .tab.active {
+      background-color: #007bff;
+      color: white;
+    }
+
+    #transactionsTable {
+      width: 100%;
+      border-collapse: collapse;
+      margin-top: 10px;
+    }
+    #transactionsTable th, #transactionsTable td {
+      border: 1px solid #ccc;
+      padding: 8px;
+      text-align: center;
+    }
+
+    form label {
+      display: block;
+      margin-top: 10px;
+    }
+    form input, form select, form button {
+      width: 100%;
+      padding: 6px;
+      margin-top: 4px;
+      box-sizing: border-box;
+    }
+    #financeForm button {
+      margin-top: 15px;
+    }
