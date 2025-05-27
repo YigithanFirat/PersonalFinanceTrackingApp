@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="tr">
+<head>
+    <meta charset="UTF-8" />
+    <title>Grafikler</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        /* Canvasları görünür yapmak için boyutlar */
+        canvas {
+            max-width: 100%;
+            height: 300px !important; /* 300px yükseklik verdik */
+        }
+    </style>
+</head>
+<body class="bg-light">
+    <div class="container py-5">
+        <h1 class="mb-4 text-center">Finansal Grafikler</h1>
+
+        <div class="mb-5">
+            <h4>📈 Aylık Gelir Grafiği</h4>
+            <canvas id="gelirGrafik"></canvas>
+        </div>
+
+        <div class="mb-5">
+            <h4>📉 Aylık Gider Grafiği</h4>
+            <canvas id="giderGrafik"></canvas>
+        </div>
+
+        <div>
+            <h4>📊 Gelir-Gider Karşılaştırması</h4>
+            <canvas id="karsilastirmaGrafik"></canvas>
+        </div>
+    </div>
+
+    <script>
+        let gelirChart, giderChart, karsilastirmaChart;
+
+        async function fetchData(url) {
+            const response = await fetch(url);
+            if (!response.ok) {
+                console.error('Fetch error:', response.status, response.statusText);
+                return null;
+            }
+            return await response.json();
+        }
+
+        function createOrUpdateChart(chartInstance, ctx, label, labels, data, color) {
+            if (chartInstance) {
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets[0].data = data;
+                chartInstance.update();
+                return chartInstance;
+            }
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [{
+                        label: label,
+                        data: data,
+                        backgroundColor: color,
+                        borderRadius: 8
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        function createOrUpdateComparisonChart(chartInstance, ctx, labels, gelirData, giderData) {
+            if (chartInstance) {
+                chartInstance.data.labels = labels;
+                chartInstance.data.datasets[0].data = gelirData;
+                chartInstance.data.datasets[1].data = giderData;
+                chartInstance.update();
+                return chartInstance;
+            }
+            return new Chart(ctx, {
+                type: 'bar',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: 'Gelir',
+                            data: gelirData,
+                            backgroundColor: 'rgba(75, 192, 192, 0.6)',
+                            borderRadius: 8
+                        },
+                        {
+                            label: 'Gider',
+                            data: giderData,
+                            backgroundColor: 'rgba(255, 99, 132, 0.6)',
+                            borderRadius: 8
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    plugins: {
+                        legend: { display: true }
+                    },
+                    scales: {
+                        y: { beginAtZero: true }
+                    }
+                }
+            });
+        }
+
+        async function renderCharts() {
+            const gelirData = await fetchData('/api/grafik/gelir');
+            const giderData = await fetchData('/api/grafik/gider');
+            const karsilastirmaData = await fetchData('/api/grafik/karsilastir');
+
+            if (gelirData && gelirData.labels.length > 0) {
+                gelirChart = createOrUpdateChart(
+                    gelirChart,
+                    document.getElementById('gelirGrafik'),
+                    'Aylık Gelir',
+                    gelirData.labels,
+                    gelirData.data,
+                    'rgba(75, 192, 192, 0.6)'
+                );
+            }
+
+            if (giderData && giderData.labels.length > 0) {
+                giderChart = createOrUpdateChart(
+                    giderChart,
+                    document.getElementById('giderGrafik'),
+                    'Aylık Gider',
+                    giderData.labels,
+                    giderData.data,
+                    'rgba(255, 99, 132, 0.6)'
+                );
+            }
+
+            if (
+                karsilastirmaData &&
+                karsilastirmaData.labels.length > 0 &&
+                karsilastirmaData.gelirData.length > 0 &&
+                karsilastirmaData.giderData.length > 0
+            ) {
+                karsilastirmaChart = createOrUpdateComparisonChart(
+                    karsilastirmaChart,
+                    document.getElementById('karsilastirmaGrafik'),
+                    karsilastirmaData.labels,
+                    karsilastirmaData.gelirData,
+                    karsilastirmaData.giderData
+                );
+            }
+        }
+
+        renderCharts();
+    </script>
+</body>
+</html>
