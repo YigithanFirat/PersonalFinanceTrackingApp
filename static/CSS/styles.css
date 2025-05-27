@@ -1,6 +1,8 @@
+/* Genel reset ve temel ayarlar */
 * {
   box-sizing: border-box;
 }
+
 body {
   font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
   background-color: #f4f6f8;
@@ -9,11 +11,14 @@ body {
   margin: 0 auto;
   padding: 20px;
 }
+
 h1 {
   text-align: center;
   color: #007bff;
   margin-bottom: 30px;
 }
+
+/* Buton, input, select ortak stil */
 button, input, select {
   font-size: 1rem;
   padding: 10px;
@@ -23,22 +28,29 @@ button, input, select {
   transition: 0.3s ease;
   margin-top: 5px;
   width: 100%;
+  cursor: pointer;
 }
+
+/* Buton hover */
 button:hover {
   background-color: #007bff;
   color: white;
-  cursor: pointer;
   border-color: #007bff;
 }
+
+/* Özel butonlar */
 #goToGraph {
   background-color: #28a745;
   color: white;
   border: none;
   margin-bottom: 20px;
 }
+
 #goToGraph:hover {
   background-color: #218838;
 }
+
+/* Form stili */
 form {
   background-color: white;
   padding: 20px;
@@ -46,31 +58,86 @@ form {
   box-shadow: 0 2px 8px rgba(0,0,0,0.1);
   margin-bottom: 30px;
 }
+
+/* Label */
 label {
   margin-top: 10px;
   display: block;
   font-weight: bold;
 }
+
+/* Tab sekmeler */
+.tab {
+  cursor: pointer;
+  display: inline-block;
+  padding: 10px 20px;
+  margin-right: 10px;
+  background-color: #eee;
+  border-radius: 12px 12px 0 0;
+  font-weight: bold;
+  color: #333;
+  user-select: none;
+  border: 1px solid #ccc;
+}
+
+.tab.active {
+  background-color: #007bff;
+  color: white;
+  border-color: #007bff;
+}
+
+/* Gizleme */
+.hidden {
+  display: none;
+}
+
+/* Tablo stili */
 table {
   width: 100%;
-  border-collapse: collapse;
+  border-collapse: collapse; /* collapse ile birleşik çizgiler */
   margin-top: 10px;
   background-color: white;
   border-radius: 12px;
   overflow: hidden;
   box-shadow: 0 2px 8px rgba(0,0,0,0.05);
+  border: 2px solid #ccc; /* dış çerçeve */
 }
+
 th, td {
   padding: 12px;
-  text-align: left;
-  border-bottom: 1px solid #eee;
+  text-align: center;
+  border: 1px solid #ccc; /* tüm kenarlarda belirgin çizgi */
 }
+
 th {
   background-color: #f0f0f0;
+  font-weight: bold;
 }
+
+/* Köşe radiusları başlık için */
+thead th:first-child {
+  border-top-left-radius: 12px;
+}
+
+thead th:last-child {
+  border-top-right-radius: 12px;
+}
+
+/* Köşe radiusları gövde için */
+tbody tr:last-child td:first-child {
+  border-bottom-left-radius: 12px;
+}
+
+tbody tr:last-child td:last-child {
+  border-bottom-right-radius: 12px;
+}
+
+/* Hover efekti */
 tr:hover {
   background-color: #f9f9f9;
 }
+
+/* Düzenle ve sil butonları */
 button.edit {
   background-color: #FF9900;
   color: white;
@@ -79,49 +146,63 @@ button.edit {
   border-radius: 6px;
   margin-right: 5px;
   width: auto;
-  cursor: pointer;
 }
+
 button.delete {
-  background-color: #dc3545;
+  background-color: #FF0000;
   color: white;
   border: none;
   padding: 6px 12px;
   border-radius: 6px;
   width: auto;
-  cursor: pointer;
 }
+
 button.edit:hover {
   background-color: #e0a800;
 }
+
 button.delete:hover {
   background-color: #c82333;
 }
+
+/* Durum mesajları */
 #status, #authStatus {
   margin-top: 15px;
   font-weight: bold;
   color: #555;
   text-align: center;
 }
-/* Sekme butonları */
-.tab {
-  display: inline-block;
-  padding: 10px 20px;
-  margin-right: 10px;
-  background-color: #eee;
-  border-radius: 12px 12px 0 0;
-  cursor: pointer;
-  font-weight: bold;
-  color: #333;
-  user-select: none;
+
+/* Form elemanları genişliği ve margin */
+form label {
+  margin-top: 10px;
+  display: block;
 }
-.tab.active {
-  background-color: #007bff;
-  color: white;
+
+form input, form select, form button {
+  width: 100%;
+  padding: 6px;
+  margin-top: 4px;
+  box-sizing: border-box;
 }
-/* Gizleme */
-.hidden {
-  display: none;
+
+form button {
+  margin-top: 15px;
 }
+
+#financeForm button {
+  margin-top: 15px;
+}
+
+/* Focus efekti */
+input:focus, select:focus, textarea:focus {
+  border-color: #4a90e2;
+  box-shadow: 0 0 5px rgba(74, 144, 226, 0.5);
+  outline: none;
+  transition: border-color 0.3s ease, box-shadow 0.3s ease;
+}
+
+/* Responsive */
 @media screen and (max-width: 600px) {
   form, table {
     font-size: 0.9rem;
@@ -134,43 +215,59 @@ button.delete:hover {
   }
 }
 
-    .hidden {
-      display: none;
-    }
+/* Dark Mode */
+body.dark-mode {
+  background-color: #121212;
+  color: #eee;
+}
 
-    .tab {
-      cursor: pointer;
-      display: inline-block;
-      padding: 10px 20px;
-      border: 1px solid #ccc;
-      user-select: none;
-    }
-    .tab.active {
-      background-color: #007bff;
-      color: white;
-    }
+body.dark-mode h1 {
+  color: #66aaff;
+}
 
-    #transactionsTable {
-      width: 100%;
-      border-collapse: collapse;
-      margin-top: 10px;
-    }
-    #transactionsTable th, #transactionsTable td {
-      border: 1px solid #ccc;
-      padding: 8px;
-      text-align: center;
-    }
+body.dark-mode form,
+body.dark-mode table {
+  background-color: #1e1e1e;
+  box-shadow: 0 2px 8px rgba(255,255,255,0.1);
+  border: none;
+}
 
-    form label {
-      display: block;
-      margin-top: 10px;
-    }
-    form input, form select, form button {
-      width: 100%;
-      padding: 6px;
-      margin-top: 4px;
-      box-sizing: border-box;
-    }
-    #financeForm button {
-      margin-top: 15px;
-    }
+body.dark-mode table th {
+  background-color: #333;
+  border-color: #444;
+}
+
+body.dark-mode th, 
+body.dark-mode td {
+  border-color: #444;
+}
+
+body.dark-mode tr:hover {
+  background-color: #2a2a2a;
+}
+
+body.dark-mode button {
+  border-color: #555;
+  background-color: #333;
+  color: #eee;
+}
+
+body.dark-mode button:hover {
+  background-color: #66aaff;
+  color: #fff;
+  border-color: #66aaff;
+}
+
+body.dark-mode input,
+body.dark-mode select {
+  background-color: #333;
+  border-color: #555;
+  color: #eee;
+}
+
+body.dark-mode input:focus,
+body.dark-mode select:focus,
+body.dark-mode textarea:focus {
+  border-color: #66aaff;
+  box-shadow: 0 0 5px rgba(102, 170, 255, 0.5);
+}
