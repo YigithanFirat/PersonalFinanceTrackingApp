@@ -351,3 +351,23 @@ logoutBtn.addEventListener('click', async () => {
 goToGraphBtn.addEventListener('click', () => {
   window.location.href = '/grafik';
 });
+
+const toggleBtn = document.getElementById('toggleThemeBtn');
+const body = document.body;
+
+// LocalStorage'dan temayı yükle
+if (localStorage.getItem('theme') === 'dark') {
+  body.classList.add('dark-mode');
+  toggleBtn.textContent = 'Açık Mod';
+}
+
+toggleBtn.addEventListener('click', () => {
+  body.classList.toggle('dark-mode');
+  if (body.classList.contains('dark-mode')) {
+    toggleBtn.textContent = 'Açık Mod';
+    localStorage.setItem('theme', 'dark');
+  } else {
+    toggleBtn.textContent = 'Koyu Mod';
+    localStorage.setItem('theme', 'light');
+  }
+});
