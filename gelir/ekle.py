@@ -1,56 +1,52 @@
-import logging
 from flask import request, jsonify, session
-from datetime import datetime
+import datetime
 from veritabani.baglanti import veritabani_baglan
 
-logging.basicConfig(level=logging.DEBUG)
-
 def gelir_ekle():
-    if 'user_id' not in session:
-        logging.debug("Oturum bulunamadı. Kullanıcı giriş yapmamış.")
-        return jsonify({"success": False, "message": "Giriş yapmanız gerekiyor."}), 401
+    # Session'dan user_id alınır
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Giriş yapılmamış'}), 401
 
-    data = request.get_json()
-    if not data:
-        logging.debug("JSON verisi alınamadı.")
-        return jsonify({"success": False, "message": "Veri alınamadı."}), 400
-
-    try:
-        miktar = float(data.get("miktar", 0))
-        kategori = data.get("kategori", "").strip()
-        tarih_str = data.get("tarih", "").strip()
-
-        if not miktar or not kategori or not tarih_str:
-            logging.debug("Gerekli alanlar eksik: miktar/kategori/tarih.")
-            return jsonify({"success": False, "message": "Miktar, kategori ve tarih zorunludur."}), 400
-
-        tarih = datetime.strptime(tarih_str, "%Y-%m-%d").date()
-    except (ValueError, TypeError) as e:
-        logging.debug(f"Veri format hatası: {e}")
-        return jsonify({"success": False, "message": "Geçersiz veri formatı."}), 400
-
-    kullanici_id = session['user_id']
-    logging.debug(f"Gelen veri: miktar={miktar}, kategori={kategori}, tarih={tarih}, kullanici_id={kullanici_id}")
-
-    con = veritabani_baglan()
-    if not con:
-        logging.debug("Veritabanı bağlantısı sağlanamadı.")
-        return jsonify({"success": False, "message": "Veritabanı bağlantısı başarısız."}), 500
+    conn = veritabani_baglan()
+    cursor = conn.cursor()
 
     try:
-        cursor = con.cursor()
-        sql = """
+        # Kullanıcının login durumu DB'den kontrol edilir
+        cursor.execute("SELECT login FROM kullanicilar WHERE id = %s", (user_id,))
+        result = cursor.fetchone()
+
+        if not result or result[0] != 1:
+            return jsonify({'success': False, 'message': 'Giriş yapılmamış'}), 401
+
+        data = request.get_json()
+        if not data:
+            return jsonify({'success': False, 'message': 'Geçersiz JSON'}), 400
+
+        miktar = data.get('miktar')
+        kategori = data.get('kategori')
+        tarih = data.get('tarih')
+
+        if not all([miktar, kategori, tarih]):
+            return jsonify({'success': False, 'message': 'Eksik veri var'}), 400
+
+        try:
+            tarih_obj = datetime.datetime.strptime(tarih, "%Y-%m-%d").date()
+        except ValueError:
+            return jsonify({'success': False, 'message': 'Tarih formatı geçersiz'}), 400
+
+        cursor.execute("""
             INSERT INTO gelir (miktar, kategori, tarih, kullanici_id)
             VALUES (%s, %s, %s, %s)
-        """
-        cursor.execute(sql, (miktar, kategori, tarih, kullanici_id))
-        con.commit()
-        logging.debug("Gelir verisi başarıyla eklendi.")
+        """, (miktar, kategori, tarih_obj, user_id))
+        conn.commit()
+
     except Exception as e:
-        logging.error(f"Veritabanı hatası: {e}")
-        return jsonify({"success": False, "message": f"Veritabanı hatası: {str(e)}"}), 500
+        print("DB Hatası:", e)
+        return jsonify({'success': False, 'message': 'Sunucu hatası'}), 500
+
     finally:
         cursor.close()
-        con.close()
+        conn.close()
 
-    return jsonify({"success": True, "message": "Gelir başarıyla eklendi."})
+    return jsonify({'success': True, 'message': 'Gelir eklendi'}), 200
