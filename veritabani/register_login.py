@@ -37,14 +37,15 @@ def register():
 
 def login():
     data = request.get_json()
-    username = data.get('kullanici_adi')
-    password = data.get('sifre')
+    username = data.get('username')  # Burayı güncelledik
+    password = data.get('password')  # Burayı güncelledik
 
-    user = get_user_by_username(username)  # user dict veya None döner
+    user = get_user_by_username(username)
     if user and check_password(user['sifre'], password):
         session['login'] = True
-        session['id'] = user['id']
+        session['user_id'] = user['id']          # Burayı 'user_id' yap
         session['kullanici_adi'] = user['kullanici_adi']
+
         return jsonify({"message": "Giriş başarılı"}), 200
     else:
         return jsonify({"message": "Kullanıcı adı veya şifre hatalı"}), 401
@@ -55,13 +56,6 @@ def logout():
 
     if not user_id:
         return jsonify({'message': 'Zaten çıkış yapmışsınız'}), 400
-
-    conn = veritabani_baglan()
-    cursor = conn.cursor()
-    cursor.execute("UPDATE kullanicilar SET login = 0 WHERE id = %s", (user_id,))
-    conn.commit()
-    cursor.close()
-    conn.close()
 
     session.clear()  # tüm oturumu temizler
     return jsonify({'message': 'Başarıyla çıkış yapıldı'}), 200
@@ -83,8 +77,8 @@ def check_password(stored_hash, provided_password):
 
 def update_login_status():
     data = request.get_json()
-    username = data.get('kullanici_adi')
-    status = data.get('login')  # 1 = giriş yaptı, 0 = çıkış yaptı
+    username = data.get('username')  # Doğru key: "username"
+    status = data.get('status')      # Doğru key: "status"
 
     if username is None or status not in [0, 1]:
         return jsonify({'message': 'Geçersiz veri'}), 400
