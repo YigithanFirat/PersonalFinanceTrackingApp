@@ -1,4 +1,4 @@
-from baglanti import veritabani_baglan
+from veritabani.baglanti import veritabani_baglan
 
 def gelir_tablosu_olustur(cursor):
     """Gelir tablosunu oluşturur."""
