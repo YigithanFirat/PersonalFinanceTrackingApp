@@ -1,38 +1,53 @@
-# gider/ekle.py
-
 from flask import request, jsonify, session
 from veritabani.baglanti import veritabani_baglan
-from datetime import datetime
+import datetime
 
 def gider_ekle():
-    if 'user_id' not in session:
-        return jsonify({"success": False, "message": "Giriş yapmanız gerekiyor."}), 401
+    user_id = session.get('user_id')
+    if not user_id:
+        return jsonify({'success': False, 'message': 'Giriş yapılmamış'}), 401
+
+    data = request.get_json()
+    if not data:
+        return jsonify({'success': False, 'message': 'Geçersiz JSON'}), 400
 
     try:
-        data = request.get_json()
-        miktar = float(data.get("miktar"))
-        kategori = data.get("kategori")
-        aciklama = data.get("aciklama", "")
-        tarih_str = data.get("tarih")
-        tarih = datetime.strptime(tarih_str, "%Y-%m-%d").date()
-    except Exception as e:
-        return jsonify({"success": False, "message": f"Geçersiz veri: {str(e)}"}), 400
+        miktar = float(data.get('miktar'))
+    except (TypeError, ValueError):
+        return jsonify({'success': False, 'message': 'Miktar geçersiz'}), 400
 
-    kullanici_id = session['user_id']
+    kategori = data.get('kategori')
+    tarih = data.get('tarih')
+    aciklama = data.get('aciklama', '')
 
-    con = veritabani_baglan()
-    if not con:
-        return jsonify({"success": False, "message": "Veritabanı bağlantısı başarısız"}), 500
+    if not all([miktar, kategori, tarih]):
+        return jsonify({'success': False, 'message': 'Eksik veri var'}), 400
 
     try:
-        cursor = con.cursor()
-        cursor.execute(
-            "INSERT INTO gider (miktar, kategori, aciklama, tarih, kullanici_id) VALUES (%s, %s, %s, %s, %s)",
-            (miktar, kategori, aciklama, tarih, kullanici_id)
-        )
-        con.commit()
-        cursor.close()
-        con.close()
-        return jsonify({"success": True, "message": "Gider eklendi."}), 200
+        tarih_obj = datetime.datetime.strptime(tarih, "%Y-%m-%d").date()
+    except ValueError:
+        return jsonify({'success': False, 'message': 'Tarih formatı geçersiz'}), 400
+
+    conn = None
+    cursor = None
+    try:
+        conn = veritabani_baglan()
+        cursor = conn.cursor()
+
+        cursor.execute("""
+            INSERT INTO gider (miktar, kategori, tarih, aciklama, kullanici_id)
+            VALUES (%s, %s, %s, %s, %s)
+        """, (miktar, kategori, tarih_obj, aciklama, user_id))
+        conn.commit()
+
     except Exception as e:
-        return jsonify({"success": False, "message": f"Veritabanı hatası: {str(e)}"}), 500
+        print("Veritabanı hatası (gider_ekle):", e)
+        return jsonify({'success': False, 'message': 'Veritabanı hatası'}), 500
+
+    finally:
+        if cursor:
+            cursor.close()
+        if conn:
+            conn.close()
+
+    return jsonify({'success': True, 'message': 'Gider eklendi'}), 200
