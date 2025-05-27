@@ -4,14 +4,9 @@
     <meta charset="UTF-8" />
     <title>Grafikler</title>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+    <link rel="icon" href="{{ url_for('static', filename='favicon.ico') }}" type="image/x-icon" />
+    <link rel="stylesheet" href="{{ url_for('static', filename='CSS/grafik.css') }}">
     <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
-    <style>
-        /* Canvasları görünür yapmak için boyutlar */
-        canvas {
-            max-width: 100%;
-            height: 300px !important; /* 300px yükseklik verdik */
-        }
-    </style>
 </head>
 <body class="bg-light">
     <div class="container py-5">
