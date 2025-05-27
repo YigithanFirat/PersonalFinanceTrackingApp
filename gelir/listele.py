@@ -1,24 +1,18 @@
 from veritabani.baglanti import veritabani_baglan
+from flask import Flask, request, jsonify, render_template
+from flask_cors import CORS
 
-def gelirleri_listele():
+app = Flask(__name__)
+CORS(app)  # CORS açıldı
+
+@app.route('/api/gelir/listele', methods=['GET'])
+def gelir_listele():
     con = veritabani_baglan()
-    if con is None:
-        return {"success": False, "message": "Veritabanına bağlanılamadı.", "data": []}
-
+    if not con:
+        return jsonify({"success": False, "message": "Veritabanı bağlantısı başarısız"})
     cursor = con.cursor(dictionary=True)
-
-    try:
-        cursor.execute("SELECT * FROM gelir ORDER BY tarih DESC")
-        gelir_kayitlari = cursor.fetchall()
-
-        return {
-            "success": True,
-            "message": f"{len(gelir_kayitlari)} kayıt bulundu." if gelir_kayitlari else "Hiç kayıt yok.",
-            "data": gelir_kayitlari
-        }
-
-    except Exception as e:
-        return {"success": False, "message": f"Gelirleri listelerken hata oluştu: {e}", "data": []}
-    finally:
-        cursor.close()
-        con.close()
+    cursor.execute("SELECT * FROM gelir ORDER BY tarih DESC")
+    gelirler = cursor.fetchall()
+    cursor.close()
+    con.close()
+    return jsonify({"success": True, "data": gelirler})
