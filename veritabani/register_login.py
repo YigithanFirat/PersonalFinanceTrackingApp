@@ -52,12 +52,38 @@ def login():
 
 
 def logout():
-    user_id = session.get('id')  # 'user_id' yerine 'id' kullandık çünkü login'de o atanıyor
-
+    user_id = session.get('id')
     if not user_id:
-        return jsonify({'message': 'Zaten çıkış yapmışsınız'}), 400
+        # 400 değil 200 dön, çünkü zaten çıkış yapılmış sayılır
+        return jsonify({'message': 'Zaten çıkış yapmışsınız'}), 200
 
-    session.clear()  # tüm oturumu temizler
+    db = veritabani_baglan()
+    cursor = db.cursor()
+
+    cursor.execute("SELECT login FROM users WHERE id = %s", (user_id,))
+    result = cursor.fetchone()
+
+    if not result:
+        cursor.close()
+        db.close()
+        return jsonify({'message': 'Kullanıcı bulunamadı'}), 404
+
+    login_status = result[0]
+
+    if login_status == 0:
+        cursor.close()
+        db.close()
+        # Burada da 200 dön, zaten çıkış yapılmış
+        return jsonify({'message': 'Zaten çıkış yapmışsınız'}), 200
+
+    cursor.execute("UPDATE users SET login = 0 WHERE id = %s", (user_id,))
+    db.commit()
+
+    cursor.close()
+    db.close()
+
+    session.clear()
+
     return jsonify({'message': 'Başarıyla çıkış yapıldı'}), 200
 
 def get_user_by_username(username):
