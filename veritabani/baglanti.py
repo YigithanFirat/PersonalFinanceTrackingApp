@@ -4,7 +4,7 @@ from mysql.connector import Error
 DB_CONFIG = {
     "host": "localhost",
     "user": "root",
-    "password": "[priadon1.5]",
+    "password": "",
     "database": "finans_db"
 }
 
