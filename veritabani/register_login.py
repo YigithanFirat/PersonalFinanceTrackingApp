@@ -4,9 +4,9 @@ import hashlib
 
 def register():
     data = request.get_json()
-    username = data.get('kullanici_adi')
+    username = data.get('username')
     email = data.get('email')
-    password = data.get('sifre')
+    password = data.get('password')
 
     if not username or not email or not password:
         return jsonify({"message": "Eksik bilgi girdiniz!"}), 400
